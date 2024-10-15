@@ -49,7 +49,7 @@
   },
   "configuration": {
     "default": {
-      "configurableResponse": "Hello, world! Amit passed from here"
+      "configurableResponse": "Hello, world! Amit passed from here, testing."
     },
     "type": "object",
     "properties": {

@@ -23,7 +23,7 @@ export const pluginSettingsSchema = T.Object(
     configurableResponse: T.String(),
     customStringsUrl: T.Optional(T.String()),
   },
-  { default: { configurableResponse: "Hello, world! Amit passed from here" } }
+  { default: { configurableResponse: "Hello, world! Amit passed from here, testing" } }
 );
 
 export const pluginSettingsValidator = new StandardValidator(pluginSettingsSchema);
