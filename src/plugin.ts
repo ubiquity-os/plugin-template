@@ -10,10 +10,24 @@ import { LogLevel, Logs } from "@ubiquity-dao/ubiquibot-logger";
  * The main plugin function. Split for easier testing.
  */
 export async function runPlugin(context: Context) {
-  const { logger, eventName } = context;
+  const { logger, eventName, payload } = context;
 
+  // let's keep it for testing purposes
   if (isIssueCommentEvent(context)) {
     return await helloWorld(context);
+  }
+
+  const contributors: Record<string, number> = {};
+
+  // increment the counter for each new event for every contributor in that issue or PR
+  const login = payload.sender?.login; // the user who triggered the event
+
+  if (login) {
+    if (contributors[login]) {
+      contributors[login]++;
+    } else {
+      contributors[login] = 1;
+    }
   }
 
   logger.error(`Unsupported event: ${eventName}`);

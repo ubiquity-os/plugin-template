@@ -1,4 +1,4 @@
-name: "the name of the plugin"
+name: "github contributor rewards"
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ on:
 
 jobs:
   compute:
-    name: "plugin name"
+    name: "github contributor rewards"
     runs-on: ubuntu-latest
     permissions: write-all
     env:
@@ -38,7 +38,7 @@ jobs:
 
       - name: execute directive
         run: npx tsx ./src/main.ts
-        id: plugin-name
+        id: github-contrib-reward
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
