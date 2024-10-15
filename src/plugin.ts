@@ -4,6 +4,7 @@ import { Env, PluginInputs } from "./types";
 import { Context } from "./types";
 import { isIssueCommentEvent } from "./types/typeguards";
 import { helloWorld } from "./handlers/hello-world";
+import { contribReward } from "./handlers/contrib-reward";
 import { LogLevel, Logs } from "@ubiquity-dao/ubiquibot-logger";
 
 /**
@@ -17,17 +18,8 @@ export async function runPlugin(context: Context) {
     return await helloWorld(context);
   }
 
-  const contributors: Record<string, number> = {};
-
-  // increment the counter for each new event for every contributor in that issue or PR
-  const login = payload.sender?.login; // the user who triggered the event
-
-  if (login) {
-    if (contributors[login]) {
-      contributors[login]++;
-    } else {
-      contributors[login] = 1;
-    }
+  if (eventName === "issue_comment.created" && payload.comment.body.match(/rewards/i)) {
+    return await contribReward(context);
   }
 
   logger.error(`Unsupported event: ${eventName}`);
