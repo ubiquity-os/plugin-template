@@ -1,0 +1,8 @@
+plugins:
+  "issue_comment.created":
+    - name: "reward plugin name"
+      command: "/rewards"
+      skipBotEvents: true
+      uses:
+        - plugin: amit0617/contributor-rewards:compute.yml@development
+          type: github
