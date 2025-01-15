@@ -5,7 +5,7 @@ import { Context } from "../types";
  *
  * This encapsulates the logic for a plugin if the only thing it does is say "Hello, world!".
  *
- * Try it out by running your local kernel worker and running the `yarn worker` command.
+ * Try it out by running your local kernel worker and running the `bun worker` command.
  * Comment on an issue in a repository where your GitHub App is installed and see the magic happen!
  *
  * Logger examples are provided to show how to log different types of data.

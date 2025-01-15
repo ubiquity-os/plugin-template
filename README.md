@@ -1,4 +1,4 @@
-# `@ubiquibot/plugin-template`
+# `@ubiquity-os/plugin-template`
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@
 
 1. Create a new repository using this template.
 2. Clone the repository to your local machine.
-3. Install the dependencies preferably using `yarn` or `bun`.
+3. Install the dependencies preferably using `bun`.
 
 ## Creating a new plugin
 
@@ -43,7 +43,7 @@ plugins:
 
 ### Worker Plugins
 
-- `yarn/bun worker` - to run the worker locally.
+- `bun worker` - to run the worker locally.
 - To trigger the worker, `POST` requests to http://localhost:4000/ with an event payload similar to:
 
 ```ts

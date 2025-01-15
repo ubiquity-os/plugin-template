@@ -17,12 +17,15 @@ on:
         description: "Ref"
       signature:
         description: "The kernel signature"
+      command:
+        description: "Command from the Kernel"
 
 jobs:
   compute:
     name: "plugin name"
     runs-on: ubuntu-latest
     permissions: write-all
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'development' }}
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -30,13 +33,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup node
-        uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: "20.10.0"
+          bun-version: latest
 
       - name: install dependencies
-        run: yarn
+        run: bun install
 
       - name: execute directive
         run: npx tsx ./src/main.ts

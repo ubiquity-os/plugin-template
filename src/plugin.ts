@@ -1,10 +1,9 @@
 import { Octokit } from "@octokit/rest";
-import { returnDataToKernel } from "./helpers/validator";
-import { Env, PluginInputs } from "./types";
-import { Context } from "./types";
-import { isIssueCommentEvent } from "./types/typeguards";
-import { helloWorld } from "./handlers/hello-world";
 import { LogLevel, Logs } from "@ubiquity-dao/ubiquibot-logger";
+import { helloWorld } from "./handlers/hello-world";
+import { returnDataToKernel } from "./helpers/validator";
+import { Context, Env, PluginInputs } from "./types";
+import { isIssueCommentEvent } from "./types/typeguards";
 
 /**
  * The main plugin function. Split for easier testing.
