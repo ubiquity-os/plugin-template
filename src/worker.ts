@@ -4,11 +4,11 @@ import { Manifest } from "@ubiquity-os/plugin-sdk/manifest";
 import { ExecutionContext } from "hono";
 import manifest from "../manifest.json";
 import { runPlugin } from "./index";
-import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEventsU } from "./types";
+import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEvents } from "./types";
 
 export default {
   async fetch(request: Request, env: Env, executionCtx?: ExecutionContext) {
-    return createPlugin<PluginSettings, Env, null, SupportedEventsU>(
+    return createPlugin<PluginSettings, Env, null, SupportedEvents>(
       (context) => {
         return runPlugin(context);
       },

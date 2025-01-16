@@ -1,4 +1,3 @@
-import { EmitterWebhookEvent as WebhookEvent, EmitterWebhookEventName as WebhookEventName } from "@octokit/webhooks";
 import { Context as PluginContext } from "@ubiquity-os/plugin-sdk";
 import { Env } from "./env";
 import { PluginSettings } from "./plugin-inputs";
@@ -8,10 +7,6 @@ import { PluginSettings } from "./plugin-inputs";
  *
  * ubiquity:listeners: ["issue_comment.created", ...]
  */
-export type SupportedEventsU = "issue_comment.created";
+export type SupportedEvents = "issue_comment.created";
 
-export type SupportedEvents = {
-  [K in SupportedEventsU]: K extends WebhookEventName ? WebhookEvent<K> : never;
-};
-
-export type Context<T extends SupportedEventsU = SupportedEventsU> = PluginContext<PluginSettings, Env, null, T>;
+export type Context<T extends SupportedEvents = SupportedEvents> = PluginContext<PluginSettings, Env, null, T>;

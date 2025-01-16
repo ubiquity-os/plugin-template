@@ -1,9 +1,9 @@
 import { LogLevel } from "@ubiquity-dao/ubiquibot-logger";
 import { createActionsPlugin } from "@ubiquity-os/plugin-sdk";
 import { runPlugin } from "./index";
-import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEventsU } from "./types";
+import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEvents } from "./types";
 
-export default createActionsPlugin<PluginSettings, Env, null, SupportedEventsU>(
+export default createActionsPlugin<PluginSettings, Env, null, SupportedEvents>(
   (context) => {
     return runPlugin(context);
   },
