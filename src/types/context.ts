@@ -1,6 +1,6 @@
 import { Context as PluginContext } from "@ubiquity-os/plugin-sdk";
 import { Env } from "./env";
-import { PluginSettings } from "./plugin-inputs";
+import { PluginSettings } from "./plugin-input";
 
 /**
  * Update `manifest.json` with any events you want to support like so:
