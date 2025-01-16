@@ -9,13 +9,8 @@ jobs:
     name: Delete Deployment
     environment: ${{ (github.ref == 'refs/heads/main' || github.event.workflow_run.head_branch == 'main') && 'main' || 'development' }}
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.10.0"
-
-      - name: Enable corepack
-        run: corepack enable
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - uses: actions/checkout@v4
 
