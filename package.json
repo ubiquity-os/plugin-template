@@ -32,7 +32,6 @@
     "open-source"
   ],
   "dependencies": {
-    "@octokit/rest": "20.1.1",
     "@sinclair/typebox": "0.32.33",
     "@ubiquity-os/plugin-sdk": "^2.0.1",
     "@ubiquity-os/ubiquity-os-logger": "^1.3.2",
