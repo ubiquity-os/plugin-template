@@ -37,7 +37,7 @@ plugins:
 
 ###### At this stage, your plugin will fire on your defined events with the required settings passed in from the kernel. You can now start writing your plugin's logic.
 
-6. Start building your plugin by adding your logic to the [plugin.ts](./src/plugin.ts) file.
+6. Start building your plugin by adding your logic to the [plugin.ts](./src/index.ts) file.
 
 ## Testing a plugin
 

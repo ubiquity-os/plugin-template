@@ -10,7 +10,7 @@ import manifest from "../manifest.json";
 import dotenv from "dotenv";
 import { Logs } from "@ubiquity-dao/ubiquibot-logger";
 import { Env } from "../src/types";
-import { runPlugin } from "../src/plugin";
+import { runPlugin } from "../src";
 
 dotenv.config();
 jest.requireActual("@octokit/rest");

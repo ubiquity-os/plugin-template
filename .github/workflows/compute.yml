@@ -37,11 +37,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: install dependencies
-        run: bun install
-
       - name: execute directive
-        run: npx tsx ./src/main.ts
+        run: bun ./src/action.ts
         id: plugin-name
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
