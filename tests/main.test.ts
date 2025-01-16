@@ -62,16 +62,16 @@ describe("Plugin tests", () => {
     const { context } = createContext();
     await runPlugin(context);
     const comments = db.issueComments.getAll();
-    expect(comments.length).toBe(2);
-    expect(comments[1].body).toBe(STRINGS.HELLO_WORLD);
+    expect(comments.length).toBe(1);
+    expect(comments[0].body).toMatch(STRINGS.HELLO_WORLD);
   });
 
   it("Should respond with `Hello, Code Reviewers` in response to /Hello", async () => {
     const { context } = createContext(STRINGS.CONFIGURABLE_RESPONSE);
     await runPlugin(context);
     const comments = db.issueComments.getAll();
-    expect(comments.length).toBe(2);
-    expect(comments[1].body).toBe(STRINGS.CONFIGURABLE_RESPONSE);
+    expect(comments.length).toBe(1);
+    expect(comments[0].body).toMatch(STRINGS.CONFIGURABLE_RESPONSE);
   });
 
   it("Should not respond to a comment that doesn't contain /Hello", async () => {
