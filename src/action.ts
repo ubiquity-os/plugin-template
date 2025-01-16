@@ -1,4 +1,4 @@
-import { LogLevel } from "@ubiquity-dao/ubiquibot-logger";
+import { LogLevel } from "@ubiquity-os/ubiquity-os-logger";
 import { createActionsPlugin } from "@ubiquity-os/plugin-sdk";
 import { runPlugin } from "./index";
 import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEvents } from "./types";

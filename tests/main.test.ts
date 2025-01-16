@@ -1,19 +1,18 @@
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { drop } from "@mswjs/data";
-import { db } from "./__mocks__/db";
-import { server } from "./__mocks__/node";
-import { expect, describe, beforeAll, beforeEach, afterAll, afterEach, it } from "@jest/globals";
-import { Context } from "../src/types/context";
 import { Octokit } from "@octokit/rest";
-import { STRINGS } from "./__mocks__/strings";
-import { createComment, setupTests } from "./__mocks__/helpers";
-import manifest from "../manifest.json";
+import { Logs } from "@ubiquity-os/ubiquity-os-logger";
 import dotenv from "dotenv";
-import { Logs } from "@ubiquity-dao/ubiquibot-logger";
-import { Env } from "../src/types";
+import manifest from "../manifest.json";
 import { runPlugin } from "../src";
+import { Env } from "../src/types";
+import { Context } from "../src/types/context";
+import { db } from "./__mocks__/db";
+import { createComment, setupTests } from "./__mocks__/helpers";
+import { server } from "./__mocks__/node";
+import { STRINGS } from "./__mocks__/strings";
 
 dotenv.config();
-jest.requireActual("@octokit/rest");
 const octokit = new Octokit();
 
 beforeAll(() => {
@@ -33,7 +32,7 @@ describe("Plugin tests", () => {
 
   it("Should serve the manifest file", async () => {
     const worker = (await import("../src/worker")).default;
-    const response = await worker.fetch(new Request("http://localhost/manifest"), {});
+    const response = await worker.fetch(new Request("http://localhost/manifest.json"), {});
     const content = await response.json();
     expect(content).toEqual(manifest);
   });
@@ -55,7 +54,7 @@ describe("Plugin tests", () => {
       owner: STRINGS.USER_1,
     });
     expect(infoSpy).toHaveBeenNthCalledWith(1, STRINGS.HELLO_WORLD);
-    expect(okSpy).toHaveBeenNthCalledWith(1, STRINGS.SUCCESSFULLY_CREATED_COMMENT);
+    expect(okSpy).toHaveBeenNthCalledWith(2, STRINGS.SUCCESSFULLY_CREATED_COMMENT);
     expect(verboseSpy).toHaveBeenNthCalledWith(1, STRINGS.EXITING_HELLO_WORLD);
   });
 
@@ -141,6 +140,7 @@ function createContextInner(
 ): Context {
   return {
     eventName: "issue_comment.created",
+    command: null,
     payload: {
       action: "created",
       sender: sender,

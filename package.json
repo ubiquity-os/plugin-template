@@ -20,7 +20,7 @@
     "knip": "knip --config .github/knip.ts",
     "knip-ci": "knip --no-exit-code --reporter json --config .github/knip.ts",
     "prepare": "husky install",
-    "test": "jest --setupFiles dotenv/config --coverage",
+    "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --setupFiles dotenv/config --coverage",
     "worker": "wrangler dev --env dev --port 4000"
   },
   "keywords": [
@@ -33,10 +33,11 @@
   "dependencies": {
     "@octokit/rest": "20.1.1",
     "@sinclair/typebox": "0.32.33",
-    "@ubiquity-dao/ubiquibot-logger": "^1.3.1",
     "@ubiquity-os/plugin-sdk": "^2.0.1",
+    "@ubiquity-os/ubiquity-os-logger": "^1.3.2",
     "dotenv": "16.4.5",
-    "hono": "^4.6.16"
+    "hono": "^4.6.16",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@commitlint/cli": "19.3.0",
@@ -49,6 +50,7 @@
     "@mswjs/data": "0.16.1",
     "@types/jest": "^29.5.12",
     "@types/node": "20.14.5",
+    "cross-env": "^7.0.3",
     "cspell": "8.14.4",
     "eslint": "9.12.0",
     "eslint-plugin-check-file": "2.8.0",
