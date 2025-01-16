@@ -137,7 +137,7 @@ function createContextInner(
   issue: Context["payload"]["issue"],
   comment: Context["payload"]["comment"],
   configurableResponse: string
-): Context {
+) {
   return {
     eventName: "issue_comment.created",
     command: null,
@@ -156,5 +156,5 @@ function createContextInner(
     },
     env: {} as Env,
     octokit: octokit,
-  };
+  } as unknown as Context;
 }
