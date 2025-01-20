@@ -9,10 +9,10 @@ import { StaticDecode, Type as T } from "@sinclair/typebox";
  */
 export const pluginSettingsSchema = T.Object(
   {
-    configurableResponse: T.String(),
+    configurableResponse: T.String({ default: "Hello, world!" }),
     customStringsUrl: T.Optional(T.String()),
   },
-  { default: { configurableResponse: "Hello, world!" } }
+  { default: {} }
 );
 
 export type PluginSettings = StaticDecode<typeof pluginSettingsSchema>;
