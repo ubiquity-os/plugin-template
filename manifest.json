@@ -1,9 +1,7 @@
 {
   "name": "ts-template",
   "description": "ts-template for UbiquityOS plugins.",
-  "ubiquity:listeners": [
-    "issue_comment.created"
-  ],
+  "ubiquity:listeners": ["issue_comment.created"],
   "commands": {
     "command1": {
       "ubiquity:example": "/command1 argument",
@@ -11,20 +9,16 @@
     }
   },
   "configuration": {
-    "default": {
-      "configurableResponse": "Hello, world!"
-    },
+    "default": {},
     "type": "object",
     "properties": {
       "configurableResponse": {
+        "default": "Hello, world!",
         "type": "string"
       },
       "customStringsUrl": {
         "type": "string"
       }
-    },
-    "required": [
-      "configurableResponse"
-    ]
+    }
   }
 }

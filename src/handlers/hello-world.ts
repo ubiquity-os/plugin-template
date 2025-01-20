@@ -1,3 +1,4 @@
+import { postComment } from "@ubiquity-os/plugin-sdk";
 import { Context } from "../types";
 
 /**
@@ -5,7 +6,7 @@ import { Context } from "../types";
  *
  * This encapsulates the logic for a plugin if the only thing it does is say "Hello, world!".
  *
- * Try it out by running your local kernel worker and running the `yarn worker` command.
+ * Try it out by running your local kernel worker and running the `bun worker` command.
  * Comment on an issue in a repository where your GitHub App is installed and see the magic happen!
  *
  * Logger examples are provided to show how to log different types of data.
@@ -14,7 +15,6 @@ export async function helloWorld(context: Context) {
   const {
     logger,
     payload,
-    octokit,
     config: { configurableResponse, customStringsUrl },
   } = context;
 
@@ -32,36 +32,13 @@ export async function helloWorld(context: Context) {
   logger.info("Hello, world!");
   logger.debug(`Executing helloWorld:`, { sender, repo, issueNumber, owner });
 
-  try {
-    await octokit.issues.createComment({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      issue_number: payload.issue.number,
-      body: configurableResponse,
-    });
-    if (customStringsUrl) {
-      const response = await fetch(customStringsUrl).then((value) => value.json());
-      await octokit.issues.createComment({
-        owner: payload.repository.owner.login,
-        repo: payload.repository.name,
-        issue_number: payload.issue.number,
-        body: response.greeting,
-      });
-    }
-  } catch (error) {
-    /**
-     * logger.fatal should not be used in 9/10 cases. Use logger.error instead.
-     *
-     * Below are examples of passing error objects to the logger, only one is needed.
-     */
-    if (error instanceof Error) {
-      logger.error(`Error creating comment:`, { error: error, stack: error.stack });
-      throw error;
-    } else {
-      logger.error(`Error creating comment:`, { err: error, error: new Error() });
-      throw error;
-    }
+  await postComment(context, logger.ok(configurableResponse));
+  if (customStringsUrl) {
+    const response = await fetch(customStringsUrl).then((value) => value.json());
+    await postComment(context, logger.ok(response.greeting));
   }
+
+  // Throw errors get posted by the SDK if "postCommentOnError" is set to true.
 
   logger.ok(`Successfully created comment!`);
   logger.verbose(`Exiting helloWorld`);

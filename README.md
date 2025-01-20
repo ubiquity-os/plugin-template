@@ -1,4 +1,4 @@
-# `@ubiquibot/plugin-template`
+# `@ubiquity-os/plugin-template`
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@
 
 1. Create a new repository using this template.
 2. Clone the repository to your local machine.
-3. Install the dependencies preferably using `yarn` or `bun`.
+3. Install the dependencies preferably using `bun`.
 
 ## Creating a new plugin
 
@@ -19,7 +19,7 @@
 2. Update [compute.yml](./.github/workflows/compute.yml) with your plugin's name and update the `id`.
 3. Update [context.ts](./src/types/context.ts) with the events that your plugin will fire on.
 4. Update [manifest.json](./manifest.json) with a proper description of your plugin.
-5. Update [plugin-inputs.ts](./src/types/plugin-inputs.ts) to match the `with:` settings in your org or repo level configuration.
+5. Update [plugin-input.ts](./src/types/plugin-input.ts) to match the `with:` settings in your org or repo level configuration.
 
 - Your plugin config should look similar to this:
 
@@ -37,13 +37,13 @@ plugins:
 
 ###### At this stage, your plugin will fire on your defined events with the required settings passed in from the kernel. You can now start writing your plugin's logic.
 
-6. Start building your plugin by adding your logic to the [plugin.ts](./src/plugin.ts) file.
+6. Start building your plugin by adding your logic to the [plugin.ts](./src/index.ts) file.
 
 ## Testing a plugin
 
 ### Worker Plugins
 
-- `yarn/bun worker` - to run the worker locally.
+- `bun worker` - to run the worker locally.
 - To trigger the worker, `POST` requests to http://localhost:4000/ with an event payload similar to:
 
 ```ts
