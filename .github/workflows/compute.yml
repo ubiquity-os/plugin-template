@@ -38,7 +38,7 @@ jobs:
           bun-version: latest
 
       - name: execute directive
-        run: bun ./dist/index.ts
+        run: bun ./dist/index.js
         id: plugin-name
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
