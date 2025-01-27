@@ -32678,6 +32678,7 @@ const Ut = createActionsPlugin((e) => runPlugin(e), {
   envSchema: St,
   ...(process.env.KERNEL_PUBLIC_KEY && { kernelPublicKey: process.env.KERNEL_PUBLIC_KEY }),
   postCommentOnError: true,
+  bypassSignatureVerification: process.env.NODE_ENV === "local",
 });
 var Nt = s.A;
 export { Nt as default };
