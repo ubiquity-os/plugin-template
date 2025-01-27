@@ -32657,10 +32657,10 @@ async function runPlugin(e) {
   t.error(`Unsupported event: ${r}`);
 }
 var St = __nccwpck_require__(2874);
-const vt = w.Object({ LOG_LEVEL: w.Optional(w.Enum(J)), KERNEL_PUBLIC_KEY: w.Optional(w.String()) });
+const vt = w.Object({ LOG_LEVEL: w.Optional(w.Enum(J, { default: J.INFO })), KERNEL_PUBLIC_KEY: w.Optional(w.String()) });
 const Ut = w.Object({ configurableResponse: w.String({ default: "Hello, world!" }), customStringsUrl: w.Optional(w.String()) }, { default: {} });
 const Nt = createActionsPlugin((e) => runPlugin(e), {
-  logLevel: process.env.LOG_LEVEL ?? "info",
+  logLevel: process.env.LOG_LEVEL ?? J.INFO,
   settingsSchema: Ut,
   envSchema: vt,
   ...(process.env.KERNEL_PUBLIC_KEY && { kernelPublicKey: process.env.KERNEL_PUBLIC_KEY }),
