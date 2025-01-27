@@ -3,9 +3,9 @@
   "description": "ts-template for UbiquityOS plugins.",
   "ubiquity:listeners": ["issue_comment.created"],
   "commands": {
-    "command1": {
-      "ubiquity:example": "/command1 argument",
-      "description": "Command 1 with an argument."
+    "hello": {
+      "ubiquity:example": "/hello argument",
+      "description": "Hello command with an argument."
     }
   },
   "configuration": {

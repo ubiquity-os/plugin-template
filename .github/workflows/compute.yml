@@ -19,6 +19,7 @@ on:
         description: "The kernel signature"
       command:
         description: "Command from the Kernel"
+        required: false
 
 jobs:
   compute:
@@ -27,6 +28,9 @@ jobs:
     permissions: write-all
     environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'development' }}
     env:
+      PLUGIN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      KERNEL_PUBLIC_KEY: ${{ secrets.KERNEL_PUBLIC_KEY }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL || 'info' }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
@@ -40,6 +44,3 @@ jobs:
       - name: execute directive
         run: bun ./dist/index.js
         id: plugin-name
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
