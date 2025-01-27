@@ -32313,7 +32313,7 @@ function sanitizeMetadata(e) {
 function getPluginOptions(e) {
   return {
     kernelPublicKey: e?.kernelPublicKey || bt,
-    logLevel: e?.logLevel ?? V.INFO,
+    logLevel: e?.logLevel || V.INFO,
     postCommentOnError: e?.postCommentOnError ?? true,
     settingsSchema: e?.settingsSchema,
     envSchema: e?.envSchema,
@@ -32467,7 +32467,7 @@ function createPlugin(e, t, r) {
     const r = await t.req.json();
     const o = [...Value2.Errors(Dt, r)];
     if (o.length) {
-      console.log(o, { depth: null });
+      console.dir(o, { depth: null });
       throw new HTTPException(400, { message: "Invalid body" });
     }
     const n = r.signature;
@@ -32480,7 +32480,7 @@ function createPlugin(e, t, r) {
       try {
         i = Value2.Decode(s.settingsSchema, Value2.Default(s.settingsSchema, A.settings));
       } catch (e) {
-        console.log(...Value2.Errors(s.settingsSchema, A.settings), { depth: null });
+        console.dir(...Value2.Errors(s.settingsSchema, A.settings), { depth: null });
         throw e;
       }
     } else {
@@ -32492,7 +32492,7 @@ function createPlugin(e, t, r) {
       try {
         a = Value2.Decode(s.envSchema, Value2.Default(s.envSchema, c));
       } catch (e) {
-        console.log(...Value2.Errors(s.envSchema, c), { depth: null });
+        console.dir(...Value2.Errors(s.envSchema, c), { depth: null });
         throw e;
       }
     } else {
@@ -32548,80 +32548,79 @@ async function createActionsPlugin(e, t) {
     return;
   }
   const o = Te.context.payload.inputs;
-  const n = o.signature;
-  if (!r.bypassSignatureVerification && !(await verifySignature(r.kernelPublicKey, o, n))) {
+  const n = [...value_Errors(Dt, o)];
+  if (n.length) {
+    console.dir(n, { depth: null });
+    mt.setFailed(`Error: Invalid inputs payload: ${n.join(",")}`);
+    return;
+  }
+  const A = o.signature;
+  if (!r.bypassSignatureVerification && !(await verifySignature(r.kernelPublicKey, o, A))) {
     mt.setFailed(`Error: Invalid signature`);
     return;
   }
-  const A = Te.context.payload.inputs;
-  const i = [...value_Errors(Dt, A)];
-  if (i.length) {
-    console.dir(i, { depth: null });
-    mt.setFailed(`Error: Invalid inputs payload: ${i.join(",")}`);
-    return;
-  }
-  const a = Decode(Dt, A);
-  let c;
+  const i = Decode(Dt, o);
+  let a;
   if (r.settingsSchema) {
     try {
-      c = Decode(r.settingsSchema, value_Default(r.settingsSchema, a.settings));
+      a = Decode(r.settingsSchema, value_Default(r.settingsSchema, i.settings));
     } catch (e) {
-      console.dir(...value_Errors(r.settingsSchema, a.settings), { depth: null });
+      console.dir(...value_Errors(r.settingsSchema, i.settings), { depth: null });
       throw e;
     }
   } else {
-    c = a.settings;
+    a = i.settings;
   }
-  let l;
+  let c;
   if (r.envSchema) {
     try {
-      l = Decode(r.envSchema, value_Default(r.envSchema, process.env));
+      c = Decode(r.envSchema, value_Default(r.envSchema, process.env));
     } catch (e) {
       console.dir(...value_Errors(r.envSchema, process.env), { depth: null });
       throw e;
     }
   } else {
-    l = process.env;
+    c = process.env;
   }
-  let u = null;
-  if (a.command && r.commandSchema) {
+  let l = null;
+  if (i.command && r.commandSchema) {
     try {
-      u = Decode(r.commandSchema, value_Default(r.commandSchema, a.command));
+      l = Decode(r.commandSchema, value_Default(r.commandSchema, i.command));
     } catch (e) {
-      console.dir(...value_Errors(r.commandSchema, a.command), { depth: null });
+      console.dir(...value_Errors(r.commandSchema, i.command), { depth: null });
       throw e;
     }
-  } else if (a.command) {
-    u = a.command;
+  } else if (i.command) {
+    l = i.command;
   }
-  const g = {
-    eventName: a.eventName,
-    payload: a.eventPayload,
-    command: u,
-    octokit: new kt({ auth: a.authToken }),
-    config: c,
-    env: l,
+  const u = {
+    eventName: i.eventName,
+    payload: i.eventPayload,
+    command: l,
+    octokit: new kt({ auth: i.authToken }),
+    config: a,
+    env: c,
     logger: new q(r.logLevel),
   };
   try {
-    const t = await e(g);
+    const t = await e(u);
     mt.setOutput("result", t);
-    await returnDataToKernel(s, a.stateId, t);
+    await returnDataToKernel(s, i.stateId, t);
   } catch (e) {
     console.error(e);
     let t;
     if (e instanceof Error) {
       mt.setFailed(e);
-      t = g.logger.error(`Error: ${e}`, { error: e });
+      t = u.logger.error(`Error: ${e}`, { error: e });
     } else if (e instanceof J) {
       mt.setFailed(e.logMessage.raw);
       t = e;
     } else {
       mt.setFailed(`Error: ${e}`);
-      t = g.logger.error(`Error: ${e}`);
+      t = u.logger.error(`Error: ${e}`);
     }
     if (r.postCommentOnError && t) {
-      await postComment(g, t);
+      await postComment(u, t);
     }
   }
 }
@@ -32678,6 +32677,7 @@ const Ut = createActionsPlugin((e) => runPlugin(e), {
   envSchema: St,
   ...(process.env.KERNEL_PUBLIC_KEY && { kernelPublicKey: process.env.KERNEL_PUBLIC_KEY }),
   postCommentOnError: true,
+  bypassSignatureVerification: process.env.NODE_ENV === "local",
 });
 var Nt = s.A;
 export { Nt as default };
