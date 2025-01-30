@@ -32644,7 +32644,7 @@ async function helloWorld(e) {
   const i = r.issue.number;
   const a = r.repository.owner.login;
   const c = r.comment.body;
-  if (!c.match(/hello/i)) {
+  if (!RegExp(/hello/i).exec(c)) {
     t.error(`Invalid use of slash command, use "/hello".`, { body: c });
     return;
   }
