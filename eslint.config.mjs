@@ -9,7 +9,7 @@ export default tsEslint.config({
     "@typescript-eslint": tsEslint.plugin,
     "check-file": checkFile,
   },
-  ignores: [".github/knip.ts", "dist/**", ".wrangler/**"],
+  ignores: [".github/knip.ts", "dist/", ".wrangler/**"],
   extends: [eslint.configs.recommended, ...tsEslint.configs.recommended, sonarjs.configs.recommended],
   languageOptions: {
     parser: tsEslint.parser,
@@ -75,6 +75,14 @@ export default tsEslint.config({
     "sonarjs/function-return-type": "off",
     "sonarjs/no-misleading-array-reverse": "off",
     "sonarjs/slow-regex": "off",
+    "sonarjs/prefer-immediate-return": "error",
+    "sonarjs/no-redundant-jump": "error",
+    "sonarjs/no-same-line-conditional": "error",
+    "sonarjs/no-small-switch": "error",
+    "sonarjs/no-unused-collection": "error",
+    "sonarjs/prefer-object-literal": "error",
+    "sonarjs/prefer-single-boolean-return": "error",
+    "sonarjs/prefer-while": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {
