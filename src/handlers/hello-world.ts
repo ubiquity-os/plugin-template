@@ -20,7 +20,7 @@ export async function helloWorld(context: Context) {
 
   const sender = payload.comment.user?.login;
   const repo = payload.repository.name;
-  const issueNumber = payload.issue.number;
+  const issueNumber = "issue" in payload ? payload.issue.number : payload.pull_request.number;
   const owner = payload.repository.owner.login;
   const body = payload.comment.body;
 
