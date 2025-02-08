@@ -31385,23 +31385,24 @@ async function helloWorld(e) {
   const {
     logger: t,
     payload: r,
-    config: { customStringsUrl: s },
-    commentHandler: o,
+    config: { configurableResponse: s, customStringsUrl: o },
+    commentHandler: A,
   } = e;
-  const A = r.comment.user?.login;
-  const n = r.repository.name;
-  const i = "issue" in r ? r.issue.number : r.pull_request.number;
-  const a = r.repository.owner.login;
-  const c = r.comment.body;
-  if (!RegExp(/hello/i).exec(c)) {
-    t.error(`Invalid use of slash command, use "/hello".`, { body: c });
+  const n = r.comment.user?.login;
+  const i = r.repository.name;
+  const a = "issue" in r ? r.issue.number : r.pull_request.number;
+  const c = r.repository.owner.login;
+  const l = r.comment.body;
+  if (!RegExp(/hello/i).exec(l)) {
+    t.error(`Invalid use of slash command, use "/hello".`, { body: l });
     return;
   }
   t.info("Hello, world!");
-  t.debug(`Executing helloWorld:`, { sender: A, repo: n, issueNumber: i, owner: a });
-  if (s) {
-    const r = await fetch(s).then((e) => e.json());
-    await o.postComment(e, t.ok(r.greeting));
+  t.debug(`Executing helloWorld:`, { sender: n, repo: i, issueNumber: a, owner: c });
+  await A.postComment(e, t.ok(s));
+  if (o) {
+    const r = await fetch(o).then((e) => e.json());
+    await A.postComment(e, t.ok(r.greeting));
   }
   t.ok(`Successfully created comment!`);
   t.verbose(`Exiting helloWorld`);
