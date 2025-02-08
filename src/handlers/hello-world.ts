@@ -14,7 +14,7 @@ export async function helloWorld(context: Context) {
   const {
     logger,
     payload,
-    config: { customStringsUrl },
+    config: { configurableResponse, customStringsUrl },
     commentHandler,
   } = context;
 
@@ -32,6 +32,7 @@ export async function helloWorld(context: Context) {
   logger.info("Hello, world!");
   logger.debug(`Executing helloWorld:`, { sender, repo, issueNumber, owner });
 
+  await commentHandler.postComment(context, logger.ok(configurableResponse));
   if (customStringsUrl) {
     const response = await fetch(customStringsUrl).then((value) => value.json());
     await commentHandler.postComment(context, logger.ok(response.greeting));
