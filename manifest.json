@@ -1,7 +1,7 @@
 {
   "name": "ts-template",
   "description": "ts-template for UbiquityOS plugins.",
-  "ubiquity:listeners": ["issue_comment.created"],
+  "ubiquity:listeners": ["issue_comment.created", "pull_request_review_comment.created"],
   "commands": {
     "hello": {
       "ubiquity:example": "/hello argument",

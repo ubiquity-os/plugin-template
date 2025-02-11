@@ -1,4 +1,3 @@
-import { postComment } from "@ubiquity-os/plugin-sdk";
 import { Context } from "../types";
 
 /**
@@ -16,11 +15,12 @@ export async function helloWorld(context: Context) {
     logger,
     payload,
     config: { configurableResponse, customStringsUrl },
+    commentHandler,
   } = context;
 
   const sender = payload.comment.user?.login;
   const repo = payload.repository.name;
-  const issueNumber = payload.issue.number;
+  const issueNumber = "issue" in payload ? payload.issue.number : payload.pull_request.number;
   const owner = payload.repository.owner.login;
   const body = payload.comment.body;
 
@@ -32,10 +32,10 @@ export async function helloWorld(context: Context) {
   logger.info("Hello, world!");
   logger.debug(`Executing helloWorld:`, { sender, repo, issueNumber, owner });
 
-  await postComment(context, logger.ok(configurableResponse));
+  await commentHandler.postComment(context, logger.ok(configurableResponse));
   if (customStringsUrl) {
     const response = await fetch(customStringsUrl).then((value) => value.json());
-    await postComment(context, logger.ok(response.greeting));
+    await commentHandler.postComment(context, logger.ok(response.greeting));
   }
 
   // Throw errors get posted by the SDK if "postCommentOnError" is set to true.

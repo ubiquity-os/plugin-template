@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { drop } from "@mswjs/data";
+import { CommentHandler } from "@ubiquity-os/plugin-sdk";
 import { customOctokit as Octokit } from "@ubiquity-os/plugin-sdk/octokit";
 import { Logs } from "@ubiquity-os/ubiquity-os-logger";
 import dotenv from "dotenv";
@@ -62,16 +63,16 @@ describe("Plugin tests", () => {
     const { context } = createContext();
     await runPlugin(context);
     const comments = db.issueComments.getAll();
-    expect(comments.length).toBe(1);
-    expect(comments[0].body).toMatch(STRINGS.HELLO_WORLD);
+    expect(comments.length).toBe(2);
+    expect(comments[1].body).toMatch(STRINGS.HELLO_WORLD);
   });
 
   it("Should respond with `Hello, Code Reviewers` in response to /Hello", async () => {
     const { context } = createContext(STRINGS.CONFIGURABLE_RESPONSE);
     await runPlugin(context);
     const comments = db.issueComments.getAll();
-    expect(comments.length).toBe(1);
-    expect(comments[0].body).toMatch(STRINGS.CONFIGURABLE_RESPONSE);
+    expect(comments.length).toBe(2);
+    expect(comments[1].body).toMatch(STRINGS.CONFIGURABLE_RESPONSE);
   });
 
   it("Should not respond to a comment that doesn't contain /Hello", async () => {
@@ -102,7 +103,7 @@ function createContext(
 ) {
   const repo = db.repo.findFirst({ where: { id: { equals: repoId } } }) as unknown as Context["payload"]["repository"];
   const sender = db.users.findFirst({ where: { id: { equals: payloadSenderId } } }) as unknown as Context["payload"]["sender"];
-  const issue1 = db.issue.findFirst({ where: { id: { equals: issueOne } } }) as unknown as Context["payload"]["issue"];
+  const issue1 = db.issue.findFirst({ where: { id: { equals: issueOne } } }) as unknown as Context<"issue_comment.created">["payload"]["issue"];
 
   createComment(commentBody, commentId); // create it first then pull it from the DB and feed it to _createContext
   const comment = db.issueComments.findFirst({ where: { id: { equals: commentId } } }) as unknown as Context["payload"]["comment"];
@@ -134,7 +135,7 @@ function createContext(
 function createContextInner(
   repo: Context["payload"]["repository"],
   sender: Context["payload"]["sender"],
-  issue: Context["payload"]["issue"],
+  issue: Context<"issue_comment.created">["payload"]["issue"],
   comment: Context["payload"]["comment"],
   configurableResponse: string
 ) {
@@ -156,5 +157,6 @@ function createContextInner(
     },
     env: {} as Env,
     octokit: octokit,
+    commentHandler: new CommentHandler(),
   } as unknown as Context;
 }
