@@ -20,7 +20,6 @@
     "format:cspell": "cspell **/*",
     "knip": "knip --config .github/knip.ts",
     "knip-ci": "knip --no-exit-code --reporter json --config .github/knip.ts",
-    "prepare": "husky install",
     "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --setupFiles dotenv/config --coverage",
     "worker": "wrangler dev --env dev --port 4000"
   },
