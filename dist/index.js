@@ -1,3 +1,4 @@
+import "./sourcemap-register.cjs";
 import { createRequire as e } from "module";
 var t = {
   4914: function (e, t, r) {
@@ -31430,3 +31431,4 @@ const Dt = createActionsPlugin((e) => runPlugin(e), {
 });
 var Ft = s.A;
 export { Ft as default };
+//# sourceMappingURL=index.js.map
