@@ -37,10 +37,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
       - name: execute directive
-        run: bun ./dist/index.js
-        id: plugin-name
+        run: node ./dist/index.js
