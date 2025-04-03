@@ -24,7 +24,7 @@ export async function helloWorld(context: Context) {
   const owner = payload.repository.owner.login;
   const body = payload.comment.body;
 
-  if (!RegExp(/hello/i).exec(body)) {
+  if (!RegExp(/^\/hello/i).exec(body)) {
     logger.error(`Invalid use of slash command, use "/hello".`, { body });
     return;
   }
