@@ -1,2 +1,3 @@
 dist/** linguist-generated
-bun.lockb linguist-generated
+*.lockb linguist-generated
+*.lock linguist-generated
