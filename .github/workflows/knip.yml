@@ -2,32 +2,9 @@ name: Knip
 
 on:
   pull_request:
-  workflow_dispatch:
 
 jobs:
   run-knip:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install toolchain
-        run: bun install
-
-      - name: Store PR number
-        run: echo ${{ github.event.number }} > pr-number.txt
-
-      - name: Run Knip
-        run: bun run knip || bun run knip --reporter json > knip-results.json
-
-      - name: Upload knip result
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: knip-results
-          path: |
-            knip-results.json
-            pr-number.txt
+    uses: ariesgun/.github/.github/workflows/knip.yml@main
+    with:
+      pr_number: ${{ github.event.number }}
