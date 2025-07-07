@@ -5013,7 +5013,7 @@ var t = {
         void 0;
     const a = A(r(9896));
     const c = A(r(6928));
-    (i = a.promises),
+    ((i = a.promises),
       (t.chmod = i.chmod),
       (t.copyFile = i.copyFile),
       (t.lstat = i.lstat),
@@ -5026,7 +5026,7 @@ var t = {
       (t.rmdir = i.rmdir),
       (t.stat = i.stat),
       (t.symlink = i.symlink),
-      (t.unlink = i.unlink);
+      (t.unlink = i.unlink));
     t.IS_WINDOWS = process.platform === "win32";
     t.UV_FS_O_EXLOCK = 268435456;
     t.READONLY = a.constants.O_RDONLY;
@@ -5491,7 +5491,7 @@ var t = {
           var t;
           t = this.shift();
           while (t != null) {
-            e(t), (t = this.shift());
+            (e(t), (t = this.shift()));
           }
           return void 0;
         }
@@ -6559,10 +6559,10 @@ var t = {
           submit(...e) {
             var t, r, s, o, A, n, i;
             if (typeof e[0] === "function") {
-              (A = e), ([r, ...e] = A), ([t] = te.call(e, -1));
+              ((A = e), ([r, ...e] = A), ([t] = te.call(e, -1)));
               o = ee.load({}, this.jobDefaults);
             } else {
-              (n = e), ([o, r, ...e] = n), ([t] = te.call(e, -1));
+              ((n = e), ([o, r, ...e] = n), ([t] = te.call(e, -1)));
               o = ee.load(o, this.jobDefaults);
             }
             i = (...e) =>
