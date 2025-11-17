@@ -19,28 +19,23 @@ on:
         description: "The kernel signature"
       command:
         description: "Command from the Kernel"
+        required: false
 
 jobs:
   compute:
     name: "plugin name"
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'development' }}
+    environment: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && 'main' || 'development' }}
     env:
+      PLUGIN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      KERNEL_PUBLIC_KEY: ${{ secrets.KERNEL_PUBLIC_KEY }}
+      LOG_LEVEL: ${{ secrets.LOG_LEVEL || 'info' }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      - uses: actions/checkout@v5
 
       - name: execute directive
-        run: bun ./dist/index.js
-        id: plugin-name
-        env:
-          PLUGIN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: node ./dist/index.js

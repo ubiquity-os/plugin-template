@@ -1,7 +1,6 @@
 {
   "name": "ts-template",
   "description": "ts-template for UbiquityOS plugins.",
-  "ubiquity:listeners": ["issue_comment.created"],
   "commands": {
     "hello": {
       "ubiquity:example": "/hello argument",
