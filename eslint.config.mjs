@@ -1,17 +1,22 @@
 // @ts-check
-import tsEslint from "typescript-eslint";
 import eslint from "@eslint/js";
+import noEmptyStrings from "@ubiquity-os/eslint-plugin-no-empty-strings";
 import sonarjs from "eslint-plugin-sonarjs";
 import checkFile from "eslint-plugin-check-file";
+import { defineConfig } from "eslint/config";
+import tsEslint from "typescript-eslint";
 
-export default tsEslint.config([
+export default defineConfig(
+  eslint.configs.recommended,
+  tsEslint.configs.recommended,
+  sonarjs.configs.recommended,
   { ignores: [".github/knip.ts", "dist/", ".wrangler/**", "coverage/**"] },
   {
     plugins: {
       "@typescript-eslint": tsEslint.plugin,
       "check-file": checkFile,
+      "@ubiquity-os": noEmptyStrings,
     },
-    extends: [eslint.configs.recommended, ...tsEslint.configs.recommended, sonarjs.configs.recommended],
     languageOptions: {
       parser: tsEslint.parser,
       parserOptions: {
@@ -23,6 +28,7 @@ export default tsEslint.config([
       },
     },
     rules: {
+      "@ubiquity-os/no-empty-strings": "warn",
       "check-file/filename-naming-convention": [
         "error",
         {
@@ -142,5 +148,5 @@ export default tsEslint.config([
         },
       ],
     },
-  },
-]);
+  }
+);

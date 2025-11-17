@@ -2,7 +2,7 @@ import { LOG_LEVEL, LogLevel } from "@ubiquity-os/ubiquity-os-logger";
 import { createPlugin } from "@ubiquity-os/plugin-sdk";
 import { Manifest } from "@ubiquity-os/plugin-sdk/manifest";
 import { ExecutionContext } from "hono";
-import manifest from "../manifest.json";
+import manifest from "../manifest.json" with { type: "json" };
 import { runPlugin } from "./index";
 import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEvents } from "./types";
 

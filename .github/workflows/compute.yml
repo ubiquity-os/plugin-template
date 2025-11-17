@@ -35,7 +35,7 @@ jobs:
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: execute directive
         run: node ./dist/index.js
