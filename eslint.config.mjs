@@ -1,17 +1,20 @@
 // @ts-check
-import tsEslint from "typescript-eslint";
 import eslint from "@eslint/js";
 import sonarjs from "eslint-plugin-sonarjs";
 import checkFile from "eslint-plugin-check-file";
+import { defineConfig } from "eslint/config";
+import tsEslint from "typescript-eslint";
 
-export default tsEslint.config([
+export default defineConfig(
+  eslint.configs.recommended,
+  tsEslint.configs.recommended,
+  sonarjs.configs.recommended,
   { ignores: [".github/knip.ts", "dist/", ".wrangler/**", "coverage/**"] },
   {
     plugins: {
       "@typescript-eslint": tsEslint.plugin,
       "check-file": checkFile,
     },
-    extends: [eslint.configs.recommended, ...tsEslint.configs.recommended, sonarjs.configs.recommended],
     languageOptions: {
       parser: tsEslint.parser,
       parserOptions: {
@@ -142,5 +145,5 @@ export default tsEslint.config([
         },
       ],
     },
-  },
-]);
+  }
+);
