@@ -7,7 +7,7 @@
   "main": "src/worker.ts",
   "type": "module",
   "engines": {
-    "node": ">=20.10.0"
+    "node": ">=24.11.0"
   },
   "scripts": {
     "dev:bun": "bun --watch --no-clear-screen --port 4000 src/worker.ts",
