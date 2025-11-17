@@ -26,7 +26,7 @@ jobs:
     name: "plugin name"
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'development' }}
+    environment: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && 'main' || 'development' }}
     env:
       PLUGIN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       KERNEL_PUBLIC_KEY: ${{ secrets.KERNEL_PUBLIC_KEY }}
