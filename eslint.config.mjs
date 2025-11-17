@@ -1,5 +1,6 @@
 // @ts-check
 import eslint from "@eslint/js";
+import noEmptyStrings from "@ubiquity-os/eslint-plugin-no-empty-strings";
 import sonarjs from "eslint-plugin-sonarjs";
 import checkFile from "eslint-plugin-check-file";
 import { defineConfig } from "eslint/config";
@@ -14,6 +15,7 @@ export default defineConfig(
     plugins: {
       "@typescript-eslint": tsEslint.plugin,
       "check-file": checkFile,
+      "@ubiquity-os": noEmptyStrings,
     },
     languageOptions: {
       parser: tsEslint.parser,
@@ -26,6 +28,7 @@ export default defineConfig(
       },
     },
     rules: {
+      "@ubiquity-os/no-empty-strings": "warn",
       "check-file/filename-naming-convention": [
         "error",
         {

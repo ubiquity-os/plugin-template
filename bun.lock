@@ -25,6 +25,7 @@
         "@swc/jest": "^0.2.39",
         "@types/jest": "^30.0.0",
         "@types/node": "24.10.1",
+        "@ubiquity-os/eslint-plugin-no-empty-strings": "^1.0.3",
         "cross-env": "^10.1.0",
         "cspell": "9.3.2",
         "eslint": "9.39.1",
@@ -720,6 +721,8 @@
     "@typescript-eslint/utils": ["@typescript-eslint/utils@8.47.0", "", { "dependencies": { "@eslint-community/eslint-utils": "^4.7.0", "@typescript-eslint/scope-manager": "8.47.0", "@typescript-eslint/types": "8.47.0", "@typescript-eslint/typescript-estree": "8.47.0" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0", "typescript": ">=4.8.4 <6.0.0" } }, "sha512-g7XrNf25iL4TJOiPqatNuaChyqt49a/onq5YsJ9+hXeugK+41LVg7AxikMfM02PC6jbNtZLCJj6AUcQXJS/jGQ=="],
 
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.47.0", "", { "dependencies": { "@typescript-eslint/types": "8.47.0", "eslint-visitor-keys": "^4.2.1" } }, "sha512-SIV3/6eftCy1bNzCQoPmbWsRLujS8t5iDIZ4spZOBHqrM+yfX2ogg8Tt3PDTAVKw3sSCiUgg30uOAvK2r9zGjQ=="],
+
+    "@ubiquity-os/eslint-plugin-no-empty-strings": ["@ubiquity-os/eslint-plugin-no-empty-strings@1.0.3", "", { "dependencies": { "@typescript-eslint/utils": "^8.38.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.38.0", "eslint": "^9.32.0", "typescript": "^5.8.2" } }, "sha512-lqEMJWqKevdhmye9FBgF+1uYrJmDXSmA2krZ6yyHgKlkyTsKT20UUO0okJW+ESa6kKTFjI8BLBeXtPrn9MF09A=="],
 
     "@ubiquity-os/plugin-sdk": ["@ubiquity-os/plugin-sdk@3.4.0", "", { "dependencies": { "@actions/core": "^1.11.1", "@actions/github": "^6.0.0", "@octokit/core": "^6.1.4", "@octokit/plugin-paginate-graphql": "^5.2.4", "@octokit/plugin-paginate-rest": "^11.4.3", "@octokit/plugin-rest-endpoint-methods": "^13.3.1", "@octokit/plugin-retry": "^7.1.4", "@octokit/plugin-throttling": "^9.4.0", "@octokit/types": "^13.8.0", "@octokit/webhooks": "^13.7.4", "@ubiquity-os/ubiquity-os-logger": "^1.4.0", "dotenv": "^16.4.5", "hono": "^4.6.9" }, "peerDependencies": { "@sinclair/typebox": "^0.34.30" } }, "sha512-1TBvWWnLuPMBXoRLbEIFm334NABrLXv0h6GvSbzLYmfXwfWKQLCsGgJtLgRDPAi2SMoZZjWJYAS5m28SQQd8qg=="],
 
