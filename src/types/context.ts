@@ -1,6 +1,7 @@
 import { Context as PluginContext } from "@ubiquity-os/plugin-sdk";
 import { Env } from "./env";
 import { PluginSettings } from "./plugin-input";
+import { customOctokit } from "@ubiquity-os/plugin-sdk/octokit";
 
 /**
  * Update `manifest.json` with any events you want to support like so:
@@ -9,4 +10,6 @@ import { PluginSettings } from "./plugin-input";
  */
 export type SupportedEvents = "issue_comment.created" | "pull_request_review_comment.created";
 
-export type Context<T extends SupportedEvents = SupportedEvents> = PluginContext<PluginSettings, Env, null, T>;
+export type Context<T extends SupportedEvents = SupportedEvents> = PluginContext<PluginSettings, Env, null, T> & {
+  octokit: InstanceType<typeof customOctokit>;
+};
