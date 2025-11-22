@@ -1,4 +1,3 @@
-/* eslint-disable @ubiquity-os/no-empty-strings */
 /**
  * This is generic and not fully featured, but it is a good
  * starting point for testing your plugins. Adjust as needed.

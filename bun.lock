@@ -5,8 +5,8 @@
       "name": "plugin-template",
       "dependencies": {
         "@sinclair/typebox": "0.34.41",
-        "@ubiquity-os/plugin-sdk": "latest",
-        "@ubiquity-os/ubiquity-os-logger": "latest",
+        "@ubiquity-os/plugin-sdk": "^3.4.0",
+        "@ubiquity-os/ubiquity-os-logger": "^1.4.0",
         "dotenv": "17.2.3",
         "hono": "^4.10.6",
         "ts-node": "^10.9.2",
