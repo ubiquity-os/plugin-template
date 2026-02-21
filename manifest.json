@@ -1,12 +1,15 @@
 {
-  "name": "ts-template",
-  "description": "ts-template for UbiquityOS plugins.",
+  "name": "plugin-template",
+  "short_name": "gentlementlegen/plugin-template@feat/320-workflow-artifact-migration",
+  "description": "Ubiquibot plugin template repository with TypeScript support.",
   "commands": {
     "hello": {
       "ubiquity:example": "/hello argument",
       "description": "Hello command with an argument."
     }
   },
+  "ubiquity:listeners": ["pull_request_review_comment.created"],
+  "skipBotEvents": true,
   "configuration": {
     "default": {},
     "type": "object",
