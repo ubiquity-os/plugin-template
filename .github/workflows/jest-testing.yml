@@ -19,9 +19,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
       - name: Jest With Coverage
         run: |
           bun install --frozen-lockfile
