@@ -25,7 +25,7 @@
     "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --setupFiles dotenv/config --coverage",
     "worker": "wrangler dev --env dev --port 4000",
     "prepare": "bun run prepare:manifest && husky",
-    "prepare:manifest": "bun x @ubiquity-os/plugin-manifest-tool@latest .",
+    "prepare:manifest": "bunx @ubiquity-os/plugin-manifest-tool@latest .",
     "prebuild": "bun run prepare:manifest"
   },
   "keywords": [
