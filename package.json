@@ -24,7 +24,9 @@
     "knip-ci": "knip --no-exit-code --reporter json --config .github/knip.ts",
     "test": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --setupFiles dotenv/config --coverage",
     "worker": "wrangler dev --env dev --port 4000",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepare:manifest": "node ./scripts/prepare-manifest.mjs",
+    "prebuild": "bun run prepare:manifest"
   },
   "keywords": [
     "typescript",
