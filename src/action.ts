@@ -1,9 +1,7 @@
-import { createActionsPlugin } from "@ubiquity-os/plugin-sdk";
+import { createActionsPlugin, type Options as PluginSdkOptions } from "@ubiquity-os/plugin-sdk";
 import { LOG_LEVEL, LogLevel } from "@ubiquity-os/ubiquity-os-logger";
 import { runPlugin } from "./index";
 import { Env, envSchema, PluginSettings, pluginSettingsSchema, SupportedEvents } from "./types";
-
-type ActionPluginOptions = NonNullable<Parameters<typeof createActionsPlugin<PluginSettings, Env, null, SupportedEvents>>[1]>;
 
 export default createActionsPlugin<PluginSettings, Env, null, SupportedEvents>(
   (context) => {
@@ -11,8 +9,8 @@ export default createActionsPlugin<PluginSettings, Env, null, SupportedEvents>(
   },
   {
     logLevel: (process.env.LOG_LEVEL as LogLevel) || LOG_LEVEL.INFO,
-    settingsSchema: pluginSettingsSchema as unknown as ActionPluginOptions["settingsSchema"],
-    envSchema: envSchema as unknown as ActionPluginOptions["envSchema"],
+    settingsSchema: pluginSettingsSchema as unknown as PluginSdkOptions["settingsSchema"],
+    envSchema: envSchema as unknown as PluginSdkOptions["envSchema"],
     ...(process.env.KERNEL_PUBLIC_KEY && { kernelPublicKey: process.env.KERNEL_PUBLIC_KEY }),
     postCommentOnError: true,
     bypassSignatureVerification: process.env.NODE_ENV === "local",
