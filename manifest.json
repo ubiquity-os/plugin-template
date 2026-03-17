@@ -16,5 +16,6 @@
         "type": "string"
       }
     }
-  }
+  },
+  "homepage_url": "https://plugin-template-developmen.deno.dev"
 }
