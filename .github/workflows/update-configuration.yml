@@ -43,7 +43,7 @@ jobs:
       BUILD_ACTION_ENABLED: ${{ github.event_name == 'workflow_dispatch' && inputs.build_action_enabled || vars.BUILD_ACTION_ENABLED || 'true' }}
       DEPLOY_DENO_ENABLED: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_deno_enabled || vars.DEPLOY_DENO_ENABLED || 'true' }}
       SKIP_BOT_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_bot_events || vars.SKIP_BOT_EVENTS || 'true' }}
-      EXCLUDE_SUPPORTED_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.exclude_supported_events || vars.EXCLUDE_SUPPORTED_EVENTS || 'issue_comment.created' }}
+      EXCLUDE_SUPPORTED_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.exclude_supported_events || vars.EXCLUDE_SUPPORTED_EVENTS || 'issue_comment.created,pull_request_review_comment.created' }}
     outputs:
       source_ref: ${{ steps.refs.outputs.source_ref }}
       is_tag_ref: ${{ steps.refs.outputs.is_tag_ref }}
