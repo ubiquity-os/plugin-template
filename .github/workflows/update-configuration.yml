@@ -42,7 +42,7 @@ jobs:
     env:
       BUILD_ACTION_ENABLED: ${{ github.event_name == 'workflow_dispatch' && inputs.build_action_enabled || vars.BUILD_ACTION_ENABLED || 'true' }}
       DEPLOY_DENO_ENABLED: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_deno_enabled || vars.DEPLOY_DENO_ENABLED || 'true' }}
-      SKIP_BOT_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_bot_events || vars.SKIP_BOT_EVENTS || 'true' }}
+      SKIP_BOT_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_bot_events || vars.SKIP_BOT_EVENTS || 'false' }}
       EXCLUDE_SUPPORTED_EVENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.exclude_supported_events || vars.EXCLUDE_SUPPORTED_EVENTS || 'issue_comment.created,pull_request_review_comment.created' }}
     outputs:
       source_ref: ${{ steps.refs.outputs.source_ref }}
@@ -92,12 +92,9 @@ jobs:
           IS_DIST_REF: ${{ steps.refs.outputs.is_dist_ref }}
         run: |
           artifact_environment="development"
+          deno_environment="development"
           if [[ "$SOURCE_REF" == "main" || "$SOURCE_REF" == "demo" ]]; then
             artifact_environment="main"
-          fi
-
-          deno_environment="development"
-          if [[ "$SOURCE_REF" == "main" ]]; then
             deno_environment="main"
           fi
 
