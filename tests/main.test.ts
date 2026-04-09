@@ -4,7 +4,7 @@ import { CommentHandler } from "@ubiquity-os/plugin-sdk";
 import { customOctokit as Octokit } from "@ubiquity-os/plugin-sdk/octokit";
 import { Logs } from "@ubiquity-os/ubiquity-os-logger";
 import dotenv from "dotenv";
-import manifest from "../manifest.json";
+import manifest from "../manifest.json" with { type: "json" };
 import { runPlugin } from "../src";
 import { Env } from "../src/types";
 import { Context } from "../src/types/context";
