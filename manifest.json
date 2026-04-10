@@ -3,7 +3,7 @@
   "short_name": "ubiquity-os/plugin-template@development",
   "description": "UbiquityOS plugin template repository with TypeScript support.",
   "ubiquity:listeners": [],
-  "skipBotEvents": true,
+  "skipBotEvents": false,
   "configuration": {
     "default": {},
     "type": "object",
@@ -16,6 +16,5 @@
         "type": "string"
       }
     }
-  },
-  "homepage_url": "https://plugin-template-developmen.deno.dev"
+  }
 }

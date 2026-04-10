@@ -1,11 +1,12 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "plugin-template",
       "dependencies": {
         "@sinclair/typebox": "0.34.48",
-        "@ubiquity-os/plugin-sdk": "^3.12.0",
+        "@ubiquity-os/plugin-sdk": "^3.12.5",
         "@ubiquity-os/ubiquity-os-logger": "^1.4.0",
         "hono": "^4.11.9",
       },
@@ -723,7 +724,7 @@
 
     "@ubiquity-os/eslint-plugin-no-empty-strings": ["@ubiquity-os/eslint-plugin-no-empty-strings@1.0.3", "", { "dependencies": { "@typescript-eslint/utils": "^8.38.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.38.0", "eslint": "^9.32.0", "typescript": "^5.8.2" } }, "sha512-lqEMJWqKevdhmye9FBgF+1uYrJmDXSmA2krZ6yyHgKlkyTsKT20UUO0okJW+ESa6kKTFjI8BLBeXtPrn9MF09A=="],
 
-    "@ubiquity-os/plugin-sdk": ["@ubiquity-os/plugin-sdk@3.12.0", "", { "dependencies": { "@actions/core": "^1.11.1", "@actions/github": "^6.0.1", "@octokit/core": "^7.0.6", "@octokit/plugin-paginate-graphql": "^6.0.0", "@octokit/plugin-paginate-rest": "^14.0.0", "@octokit/plugin-rest-endpoint-methods": "^17.0.0", "@octokit/plugin-retry": "^8.0.3", "@octokit/plugin-throttling": "^11.0.3", "@octokit/types": "^16.0.0", "@octokit/webhooks": "^14.1.3", "@ubiquity-os/ubiquity-os-logger": "^1.4.0", "hono": "^4.10.6", "js-yaml": "^4.1.1", "ms": "^2.1.3", "openai": "^6.15.0" }, "peerDependencies": { "@sinclair/typebox": "0.34.41" } }, "sha512-/NfB1a0X+U4/fH9R+xTxfS/GasBjZ7h70jPRNoQrRkkHBXibnrEJr5xRT0HLyBz12cmzWTdKHOQxPYMTLmFxHQ=="],
+    "@ubiquity-os/plugin-sdk": ["@ubiquity-os/plugin-sdk@3.12.5", "", { "dependencies": { "@actions/core": "^1.11.1", "@actions/github": "^6.0.1", "@octokit/core": "^7.0.6", "@octokit/plugin-paginate-graphql": "^6.0.0", "@octokit/plugin-paginate-rest": "^14.0.0", "@octokit/plugin-rest-endpoint-methods": "^17.0.0", "@octokit/plugin-retry": "^8.0.3", "@octokit/plugin-throttling": "^11.0.3", "@octokit/types": "^16.0.0", "@octokit/webhooks": "^14.1.3", "@ubiquity-os/ubiquity-os-logger": "^1.4.0", "hono": "^4.10.6", "js-yaml": "^4.1.1", "ms": "^2.1.3", "openai": "^6.15.0" }, "peerDependencies": { "@sinclair/typebox": "0.34.41" } }, "sha512-T1TAdD6rZDVrRELrEiQWM5bBRdzvFzMD+o6lthCahlGkvTOG3xxPHe8iXVnYrq60qnnMTrlUGm/uV9cIujZZ5A=="],
 
     "@ubiquity-os/ubiquity-os-logger": ["@ubiquity-os/ubiquity-os-logger@1.4.0", "", {}, "sha512-giybluPmu0sreEWi60t9X8NxC5d48X7oQAb9RjXR7wX/ZNYugbAaKgj0TYEqECvSVDqgzpKo7UNerh1UQBscGw=="],
 
@@ -1962,8 +1963,6 @@
     "@typescript-eslint/eslint-plugin/ignore": ["ignore@7.0.5", "", {}, "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg=="],
 
     "@typescript-eslint/typescript-estree/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow=="],
-
-    "@ubiquity-os/plugin-sdk/hono": ["hono@4.10.6", "", {}, "sha512-BIdolzGpDO9MQ4nu3AUuDwHZZ+KViNm+EZ75Ae55eMXMqLVhDFqEMXxtUe9Qh8hjL+pIna/frs2j6Y2yD5Ua/g=="],
 
     "@ubiquity-os/plugin-sdk/js-yaml": ["js-yaml@4.1.1", "", { "dependencies": { "argparse": "^2.0.1" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA=="],
 
