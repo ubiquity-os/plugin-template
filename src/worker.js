@@ -7,30 +7,34 @@ import { runPlugin } from "./index";
 import { envSchema, pluginSettingsSchema } from "./types";
 
 function buildRuntimeManifest(request) {
-    const runtimeManifest = resolveRuntimeManifest(manifest);
-    return {
-        ...runtimeManifest,
-        homepage_url: new URL(request.url).origin,
-    };
+  const runtimeManifest = resolveRuntimeManifest(manifest);
+  return {
+    ...runtimeManifest,
+    homepage_url: new URL(request.url).origin,
+  };
 }
 
 export default {
-    async fetch(request, serverInfo, executionCtx) {
-        const runtimeManifest = buildRuntimeManifest(request);
-        if (new URL(request.url).pathname === "/manifest.json") {
-            return Response.json(runtimeManifest);
-        }
+  async fetch(request, serverInfo, executionCtx) {
+    const runtimeManifest = buildRuntimeManifest(request);
+    if (new URL(request.url).pathname === "/manifest.json") {
+      return Response.json(runtimeManifest);
+    }
 
-        const environment = env(request);
-        return createPlugin((context) => {
-            return runPlugin(context);
-        }, runtimeManifest, {
-            envSchema: envSchema,
-            postCommentOnError: true,
-            settingsSchema: pluginSettingsSchema,
-            logLevel: environment.LOG_LEVEL || LOG_LEVEL.INFO,
-            kernelPublicKey: environment.KERNEL_PUBLIC_KEY,
-            bypassSignatureVerification: environment.NODE_ENV === "local",
-        }).fetch(request, serverInfo, executionCtx);
-    },
+    const environment = env(request);
+    return createPlugin(
+      (context) => {
+        return runPlugin(context);
+      },
+      runtimeManifest,
+      {
+        envSchema: envSchema,
+        postCommentOnError: true,
+        settingsSchema: pluginSettingsSchema,
+        logLevel: environment.LOG_LEVEL || LOG_LEVEL.INFO,
+        kernelPublicKey: environment.KERNEL_PUBLIC_KEY,
+        bypassSignatureVerification: environment.NODE_ENV === "local",
+      }
+    ).fetch(request, serverInfo, executionCtx);
+  },
 };
