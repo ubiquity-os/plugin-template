@@ -10,7 +10,6 @@
     "node": ">=24.11.0"
   },
   "scripts": {
-    "dev:bun": "bun --watch --no-clear-screen --port 4000 src/worker.ts",
     "dev:deno": "deno serve -A --watch --no-clear-screen --port 4000 src/worker.ts",
     "build": "tsc --project tsconfig.json",
     "format": "run-p format:*",
