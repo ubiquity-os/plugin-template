@@ -1,0 +1,128 @@
+name: Reusable Jest Testing Workflow
+
+on:
+  workflow_call:
+    inputs:
+      package_manager:
+        description: 'Package manager to use (bun, yarn, npm, pnpm)'
+        required: false
+        default: 'bun'
+        type: string
+      yarn_version:
+        description: 'Yarn version (only used if package_manager is yarn)'
+        required: false
+        default: 'latest'
+        type: string
+      node_version:
+        description: 'Node.js version'
+        required: false
+        default: 'latest'
+        type: string
+      working_directory:
+        description: 'Working directory for the workflow'
+        required: false
+        default: '.'
+        type: string
+      test_script:
+        description: 'Test script name to run'
+        required: false
+        default: 'test'
+        type: string
+      coverage:
+        description: 'Enable code coverage'
+        required: false
+        default: false
+        type: boolean
+      coverage_script:
+        description: 'Coverage script name (if different from test script)'
+        required: false
+        default: 'test:coverage'
+        type: string
+      enable_summary:
+        description: 'Enable Jest summary in GitHub Actions summary'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  NODE_ENV: 'test'
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup Bun
+        if: inputs.package_manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Yarn
+        if: inputs.package_manager == 'yarn'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+      - run: corepack enable && corepack prepare yarn@${{ inputs.yarn_version }} --activate
+        if: inputs.package_manager == 'yarn'
+
+      - name: Install dependencies
+        working-directory: ${{ inputs.working_directory }}
+        run: |
+          if [ "${{ inputs.package_manager }}" = "bun" ]; then
+            bun install --frozen-lockfile
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn install --frozen-lockfile
+          elif [ "${{ inputs.package_manager }}" = "npm" ]; then
+            npm ci
+          elif [ "${{ inputs.package_manager }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          fi
+
+      - name: Run Jest Tests
+        id: test-run
+        working-directory: ${{ inputs.working_directory }}
+        run: |
+          if [ "${{ inputs.package_manager }}" = "bun" ]; then
+            bun run ${{ inputs.test_script }}
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn ${{ inputs.test_script }}
+          elif [ "${{ inputs.package_manager }}" = "npm" ]; then
+            npm run ${{ inputs.test_script }}
+          elif [ "${{ inputs.package_manager }}" = "pnpm" ]; then
+            pnpm run ${{ inputs.test_script }}
+          fi
+
+      - name: Run Coverage (if enabled)
+        if: inputs.coverage
+        working-directory: ${{ inputs.working_directory }}
+        run: |
+          if [ "${{ inputs.package_manager }}" = "bun" ]; then
+            bun run ${{ inputs.coverage_script }}
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn ${{ inputs.coverage_script }}
+          elif [ "${{ inputs.package_manager }}" = "npm" ]; then
+            npm run ${{ inputs.coverage_script }}
+          elif [ "${{ inputs.package_manager }}" = "pnpm" ]; then
+            pnpm run ${{ inputs.coverage_script }}
+          fi
+
+      - name: Add Jest Report to Summary
+        if: always() && inputs.enable_summary && github.event_name == 'pull_request'
+        run: |
+          if [ -f test-dashboard.md ]; then
+            echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY
+          fi

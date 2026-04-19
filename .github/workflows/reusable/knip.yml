@@ -1,0 +1,144 @@
+name: Reusable Knip Workflow
+
+on:
+  workflow_call:
+    inputs:
+      package_manager:
+        description: 'Package manager to use (bun, yarn, npm, pnpm)'
+        required: false
+        default: 'bun'
+        type: string
+      yarn_version:
+        description: 'Yarn version (only used if package_manager is yarn)'
+        required: false
+        default: 'latest'
+        type: string
+      node_version:
+        description: 'Node.js version'
+        required: false
+        default: 'latest'
+        type: string
+      working_directory:
+        description: 'Working directory for the workflow'
+        required: false
+        default: '.'
+        type: string
+      knip_script:
+        description: 'Knip script name to run'
+        required: false
+        default: 'knip'
+        type: string
+      enable_reporter:
+        description: 'Enable Knip reporter for PR comments'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  run-knip:
+    runs-on: ubuntu-latest
+    outputs:
+      knip_failed: ${{ steps.knip-run.conclusion == 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Setup Bun
+        if: inputs.package_manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Yarn
+        if: inputs.package_manager == 'yarn'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+      - run: corepack enable && corepack prepare yarn@${{ inputs.yarn_version }} --activate
+        if: inputs.package_manager == 'yarn'
+
+      - name: Install dependencies
+        working-directory: ${{ inputs.working_directory }}
+        run: |
+          if [ "${{ inputs.package_manager }}" = "bun" ]; then
+            bun install --frozen-lockfile
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn install --frozen-lockfile
+          elif [ "${{ inputs.package_manager }}" = "npm" ]; then
+            npm ci
+          elif [ "${{ inputs.package_manager }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          fi
+
+      - name: Store PR number
+        if: github.event_name == 'pull_request'
+        run: echo ${{ github.event.number }} > pr-number.txt
+
+      - name: Run Knip
+        id: knip-run
+        working-directory: ${{ inputs.working_directory }}
+        run: |
+          if [ "${{ inputs.package_manager }}" = "bun" ]; then
+            bun run ${{ inputs.knip_script }} || bun run ${{ inputs.knip_script }} --reporter json > knip-results.json
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn ${{ inputs.knip_script }} || yarn ${{ inputs.knip_script }} --reporter json > knip-results.json
+          elif [ "${{ inputs.package_manager }}" = "npm" ]; then
+            npm run ${{ inputs.knip_script }} || npm run ${{ inputs.knip_script }} -- --reporter json > knip-results.json
+          elif [ "${{ inputs.package_manager }}" = "pnpm" ]; then
+            pnpm run ${{ inputs.knip_script }} || pnpm run ${{ inputs.knip_script }} -- --reporter json > knip-results.json
+          fi
+
+      - name: Upload knip result
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: knip-results
+          path: |
+            knip-results.json
+            pr-number.txt
+          retention-days: 1
+
+  knip-reporter:
+    needs: run-knip
+    if: ${{ inputs.enable_reporter && github.event_name == 'pull_request' && needs.run-knip.outputs.knip_failed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: knip-results
+          path: ./knip-artifact
+
+      - name: Read pr number
+        id: pr-number
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./knip-artifact/pr-number.txt
+          trim: true
+
+      - name: Report knip results to pull request
+        uses: ubiquity/knip-reporter@main
+        with:
+          verbose: true
+          comment_id: 'knip-reporter'
+          command_script_name: ${{ inputs.knip_script }}
+          annotations: true
+          ignore_results: false
+          json_input: true
+          json_input_file_name: knip-artifact/knip-results.json
+          pull_request_number: ${{ steps.pr-number.outputs.content }}
+          token: ${{ secrets.GITHUB_TOKEN }}
