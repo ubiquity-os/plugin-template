@@ -1,0 +1,20 @@
+{
+  "name": "plugin-template",
+  "short_name": "ubiquity-os/plugin-template@main",
+  "description": "UbiquityOS plugin template repository with TypeScript support.",
+  "ubiquity:listeners": [],
+  "skipBotEvents": false,
+  "configuration": {
+    "default": {},
+    "type": "object",
+    "properties": {
+      "configurableResponse": {
+        "default": "Hello, world!",
+        "type": "string"
+      },
+      "customStringsUrl": {
+        "type": "string"
+      }
+    }
+  }
+}
