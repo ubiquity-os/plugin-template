@@ -2,8 +2,11 @@
   "name": "plugin-template",
   "short_name": "ubiquity-os/plugin-template@main",
   "description": "UbiquityOS plugin template repository with TypeScript support.",
-  "ubiquity:listeners": [],
-  "skipBotEvents": false,
+  "ubiquity:listeners": [
+    "issue_comment.created",
+    "pull_request_review_comment.created"
+  ],
+  "skipBotEvents": true,
   "configuration": {
     "default": {},
     "type": "object",
@@ -16,5 +19,6 @@
         "type": "string"
       }
     }
-  }
+  },
+  "homepage_url": "https://plugin-template.ubiquity-os.deno.net"
 }
