@@ -2,6 +2,28 @@ name: Run Jest testing suite
 on:
   workflow_dispatch:
   pull_request:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node.js version"
+        required: false
+        default: "20"
+        type: string
+      package-manager:
+        description: "Package manager (bun, yarn, npm)"
+        required: false
+        default: "bun"
+        type: string
+      working-directory:
+        description: "Working directory"
+        required: false
+        default: "."
+        type: string
+      test-command:
+        description: "Custom test command (overrides default)"
+        required: false
+        default: ""
+        type: string
 
 env:
   NODE_ENV: "test"
@@ -11,19 +33,59 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-      - uses: oven-sh/setup-bun@v2
+      - name: Setup Bun
+        if: inputs.package-manager == 'bun' || (inputs.package-manager == '' && github.event_name != 'workflow_call')
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Setup Node
+        if: inputs.package-manager != 'bun' && inputs.package-manager != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager == 'yarn' && 'yarn' || inputs.package-manager == 'npm' && 'npm' || '' }}
 
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Jest With Coverage
-        run: |
-          bun install --frozen-lockfile
-          bun run test
+      - name: Install dependencies (bun)
+        if: inputs.package-manager == 'bun' || (inputs.package-manager == '' && github.event_name != 'workflow_call')
+        working-directory: ${{ inputs.working-directory }}
+        run: bun install --frozen-lockfile
+
+      - name: Install dependencies (npm)
+        if: inputs.package-manager == 'npm'
+        working-directory: ${{ inputs.working-directory }}
+        run: npm ci
+
+      - name: Install dependencies (yarn)
+        if: inputs.package-manager == 'yarn'
+        working-directory: ${{ inputs.working-directory }}
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests (custom command)
+        if: inputs.test-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
+
+      - name: Run tests (bun)
+        if: inputs.test-command == '' && (inputs.package-manager == 'bun' || (inputs.package-manager == '' && github.event_name != 'workflow_call'))
+        working-directory: ${{ inputs.working-directory }}
+        run: bun run test
+
+      - name: Run tests (npm)
+        if: inputs.test-command == '' && inputs.package-manager == 'npm'
+        working-directory: ${{ inputs.working-directory }}
+        run: npm test
+
+      - name: Run tests (yarn)
+        if: inputs.test-command == '' && inputs.package-manager == 'yarn'
+        working-directory: ${{ inputs.working-directory }}
+        run: yarn test
 
       - name: Add Jest Report to Summary
         if: always()
+        working-directory: ${{ inputs.working-directory }}
         run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY

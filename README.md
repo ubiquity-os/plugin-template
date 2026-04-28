@@ -86,6 +86,20 @@ GitHub Action Secrets.
 - [Full Ubiquibot Configuration](https://github.com/ubiquity/ubiquibot/blob/0fde7551585499b1e0618ec8ea5e826f11271c9c/src/types/configuration-types.ts#L62) - helpful for defining your plugin's settings as they are strongly typed and will be validated by the kernel.
 - [Ubiquibot V1](https://github.com/ubiquity/ubiquibot) - helpful for porting V1 functionality to V2, helper/utility functions, types, etc. Everything is based on the V1 codebase but with a more modular approach. When using V1 code, keep in mind that most all code will need refactored to work with the new V2 architecture.
 
+## Reusable Workflows
+
+This template provides reusable GitHub Actions workflows for **Knip** (unused code detection) and **Jest** (testing) that any repository can call via `workflow_call`.
+
+```yaml
+jobs:
+  knip:
+    uses: ubiquity-os/plugin-template/.github/workflows/knip.yml@main
+  test:
+    uses: ubiquity-os/plugin-template/.github/workflows/jest-testing.yml@main
+```
+
+Both workflows support configurable `node-version`, `package-manager` (`bun`/`yarn`/`npm`), and `working-directory`. See [docs/reusable-workflows.md](./docs/reusable-workflows.md) for full documentation.
+
 ## Examples
 
 - [Start/Stop Slash Command](https://github.com/ubq-testing/start-stop-module) - simple
