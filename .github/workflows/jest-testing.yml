@@ -1,7 +1,50 @@
 name: Run Jest testing suite
+
 on:
   workflow_dispatch:
   pull_request:
+  workflow_call:
+    inputs:
+      package_manager:
+        description: Package manager used to install dependencies and run tests.
+        required: false
+        type: string
+        default: bun
+      bun_version:
+        description: Bun version to install when package_manager is bun.
+        required: false
+        type: string
+        default: latest
+      node_version:
+        description: Node.js version to install when package_manager is yarn.
+        required: false
+        type: string
+        default: 24
+      yarn_version:
+        description: Optional Yarn version to activate with Corepack when package_manager is yarn.
+        required: false
+        type: string
+        default: ""
+      install_command:
+        description: Override dependency installation command.
+        required: false
+        type: string
+        default: ""
+      test_command:
+        description: Override Jest/test command.
+        required: false
+        type: string
+        default: ""
+      summary_file:
+        description: Markdown file to append to the GitHub step summary when it exists.
+        required: false
+        type: string
+        default: test-dashboard.md
+      fetch_depth:
+        description: Checkout fetch depth.
+        required: false
+        type: number
+        default: 0
 
 env:
   NODE_ENV: "test"
@@ -11,19 +54,52 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-      - uses: oven-sh/setup-bun@v2
+      - name: Setup Bun
+        if: ${{ inputs.package_manager == '' || inputs.package_manager == 'bun' }}
+        uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: ${{ inputs.bun_version || 'latest' }}
+
+      - name: Setup Node for Yarn
+        if: ${{ inputs.package_manager == 'yarn' }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node_version || '24' }}
+          cache: yarn
+
+      - name: Enable requested Yarn version
+        if: ${{ inputs.package_manager == 'yarn' && inputs.yarn_version != '' }}
+        run: |
+          corepack enable
+          corepack prepare yarn@${{ inputs.yarn_version }} --activate
 
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          fetch-depth: ${{ inputs.fetch_depth || 0 }}
 
       - name: Jest With Coverage
+        shell: bash
         run: |
-          bun install --frozen-lockfile
-          bun run test
+          if [ -n "${{ inputs.install_command }}" ]; then
+            ${{ inputs.install_command }}
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn install --immutable
+          else
+            bun install --frozen-lockfile
+          fi
+
+          if [ -n "${{ inputs.test_command }}" ]; then
+            ${{ inputs.test_command }}
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn test
+          else
+            bun run test
+          fi
 
       - name: Add Jest Report to Summary
         if: always()
-        run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY
+        shell: bash
+        run: |
+          if [ -f "${{ inputs.summary_file }}" ]; then
+            cat "${{ inputs.summary_file }}" >> "$GITHUB_STEP_SUMMARY"
+          fi

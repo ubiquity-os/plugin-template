@@ -5,36 +5,78 @@ on:
     workflows: ["Knip"]
     types:
       - completed
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: Name of the Knip results artifact to download.
+        required: false
+        type: string
+        default: knip-results
+      run_id:
+        description: Workflow run id that produced the Knip results artifact. Defaults to the current run when omitted.
+        required: false
+        type: string
+        default: ""
+      pull_request_number:
+        description: Pull request number to comment on. If omitted, the workflow reads pr-number.txt from the artifact.
+        required: false
+        type: string
+        default: ""
+      comment_id:
+        description: Sticky comment id used by ubiquity/knip-reporter.
+        required: false
+        type: string
+        default: Knip-reporter-reporter
+      command_script_name:
+        description: Command name displayed by ubiquity/knip-reporter.
+        required: false
+        type: string
+        default: knip-ci
+    secrets:
+      token:
+        description: GitHub token with permission to read artifacts and comment on pull requests.
+        required: false
 
 permissions: write-all
 
 jobs:
   knip-reporter:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion != 'success' }}
+    if: ${{ github.event_name == 'workflow_call' || github.event.workflow_run.conclusion != 'success' }}
     steps:
       - uses: actions/download-artifact@v6
         with:
-          name: knip-results
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ inputs.artifact_name || 'knip-results' }}
+          run-id: ${{ inputs.run_id || github.event.workflow_run.id || github.run_id }}
+          github-token: ${{ secrets.token || secrets.GITHUB_TOKEN }}
 
-      - name: Read pr number
+      - name: Read PR number from artifact
+        if: ${{ inputs.pull_request_number == '' }}
         id: pr-number
         uses: juliangruber/read-file-action@v1
         with:
           path: ./pr-number.txt
           trim: true
 
+      - name: Resolve pull request number
+        id: pull-request-number
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.pull_request_number }}" ]; then
+            echo "number=${{ inputs.pull_request_number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "number=${{ steps.pr-number.outputs.content }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Report knip results to pull request
         uses: ubiquity/knip-reporter@main
         with:
           verbose: true
-          comment_id: ${{ github.workflow }}-reporter
-          command_script_name: knip-ci
+          comment_id: ${{ inputs.comment_id || 'Knip-reporter-reporter' }}
+          command_script_name: ${{ inputs.command_script_name || 'knip-ci' }}
           annotations: true
           ignore_results: false
           json_input: true
           json_input_file_name: knip-results.json
-          pull_request_number: ${{ steps.pr-number.outputs.content }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          pull_request_number: ${{ steps.pull-request-number.outputs.number }}
+          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}

@@ -3,6 +3,48 @@ name: Knip
 on:
   pull_request:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      package_manager:
+        description: Package manager used to install dependencies and run Knip.
+        required: false
+        type: string
+        default: bun
+      bun_version:
+        description: Bun version to install when package_manager is bun.
+        required: false
+        type: string
+        default: latest
+      node_version:
+        description: Node.js version to install when package_manager is yarn.
+        required: false
+        type: string
+        default: 24
+      yarn_version:
+        description: Optional Yarn version to activate with Corepack when package_manager is yarn.
+        required: false
+        type: string
+        default: ""
+      install_command:
+        description: Override dependency installation command.
+        required: false
+        type: string
+        default: ""
+      knip_command:
+        description: Command that runs Knip in normal human-readable mode.
+        required: false
+        type: string
+        default: ""
+      knip_json_command:
+        description: Command that writes JSON Knip results to knip-results.json without failing the shell before redirection.
+        required: false
+        type: string
+        default: ""
+      artifact_name:
+        description: Artifact name used by the reporter workflow.
+        required: false
+        type: string
+        default: knip-results
 
 jobs:
   run-knip:
@@ -12,22 +54,68 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup Bun
+        if: ${{ inputs.package_manager == '' || inputs.package_manager == 'bun' }}
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun_version || 'latest' }}
+
+      - name: Setup Node for Yarn
+        if: ${{ inputs.package_manager == 'yarn' }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node_version || '24' }}
+          cache: yarn
+
+      - name: Enable requested Yarn version
+        if: ${{ inputs.package_manager == 'yarn' && inputs.yarn_version != '' }}
+        run: |
+          corepack enable
+          corepack prepare yarn@${{ inputs.yarn_version }} --activate
 
       - name: Install toolchain
-        run: bun install
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.install_command }}" ]; then
+            ${{ inputs.install_command }}
+          elif [ "${{ inputs.package_manager }}" = "yarn" ]; then
+            yarn install --immutable
+          else
+            bun install
+          fi
 
       - name: Store PR number
+        if: ${{ github.event_name == 'pull_request' }}
         run: echo ${{ github.event.number }} > pr-number.txt
 
       - name: Run Knip
-        run: bun run knip || bun run knip --reporter json > knip-results.json
+        shell: bash
+        run: |
+          KNIP_COMMAND="${{ inputs.knip_command }}"
+          KNIP_JSON_COMMAND="${{ inputs.knip_json_command }}"
+
+          if [ -z "$KNIP_COMMAND" ]; then
+            if [ "${{ inputs.package_manager }}" = "yarn" ]; then
+              KNIP_COMMAND="yarn knip"
+            else
+              KNIP_COMMAND="bun run knip"
+            fi
+          fi
+
+          if [ -z "$KNIP_JSON_COMMAND" ]; then
+            if [ "${{ inputs.package_manager }}" = "yarn" ]; then
+              KNIP_JSON_COMMAND="yarn knip --reporter json"
+            else
+              KNIP_JSON_COMMAND="bun run knip --reporter json"
+            fi
+          fi
+
+          $KNIP_COMMAND || $KNIP_JSON_COMMAND > knip-results.json
 
       - name: Upload knip result
-        if: failure()
+        if: failure() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: knip-results
+          name: ${{ inputs.artifact_name || 'knip-results' }}
           path: |
             knip-results.json
             pr-number.txt

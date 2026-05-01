@@ -39,6 +39,77 @@ plugins:
 
 6. Start building your plugin by adding your logic to the [plugin.ts](./src/index.ts) file.
 
+## Reusable CI workflows
+
+This template exposes the Knip and Jest checks as reusable GitHub Actions workflows so fixes can be propagated to repositories that inherited from the template without copying workflow internals into every repository.
+
+### Reuse Knip
+
+```yml
+name: Knip
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  knip:
+    uses: ubiquity-os/plugin-template/.github/workflows/knip.yml@main
+    with:
+      package_manager: bun # or yarn
+```
+
+For Yarn-based repositories, pass the package manager and, when needed, the Yarn version:
+
+```yml
+jobs:
+  knip:
+    uses: ubiquity-os/plugin-template/.github/workflows/knip.yml@main
+    with:
+      package_manager: yarn
+      yarn_version: 4.9.2
+```
+
+If a child repository has custom scripts, override the commands instead of forking the workflow:
+
+```yml
+with:
+  install_command: yarn install --immutable
+  knip_command: yarn knip
+  knip_json_command: yarn knip --reporter json
+```
+
+### Reuse Knip reporter
+
+The default `knip-reporter.yml` still listens for this repository's `Knip` workflow via `workflow_run`. Repositories that want a thin local reporter can call the reusable reporter and pass the producing run id and pull request number:
+
+```yml
+jobs:
+  report:
+    uses: ubiquity-os/plugin-template/.github/workflows/knip-reporter.yml@main
+    with:
+      run_id: ${{ github.event.workflow_run.id }}
+      pull_request_number: ${{ github.event.workflow_run.pull_requests[0].number }}
+```
+
+### Reuse Jest
+
+```yml
+name: Run Jest testing suite
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testing:
+    uses: ubiquity-os/plugin-template/.github/workflows/jest-testing.yml@main
+    with:
+      package_manager: bun # or yarn
+```
+
+Override `install_command`, `test_command`, `summary_file`, or package-manager versions when a repository differs from the template defaults.
+
 ## Testing a plugin
 
 ### Worker Plugins
