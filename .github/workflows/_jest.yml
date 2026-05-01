@@ -1,0 +1,41 @@
+name: Jest Testing (Reusable)
+
+# This workflow can be called from other repositories
+# Usage:
+#   jobs:
+#     call-jest:
+#       uses: ubiquity-os/plugin-template/.github/workflows/_jest.yml@v1.0.0
+
+on:
+  workflow_call:
+    inputs:
+      bun-version:
+        description: 'Bun version to use'
+        required: false
+        default: 'latest'
+        type: string
+
+env:
+  NODE_ENV: "test"
+
+jobs:
+  testing:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version || 'latest' }}
+
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Jest With Coverage
+        run: |
+          bun install --frozen-lockfile
+          bun run test
+
+      - name: Add Jest Report to Summary
+        if: always()
+        run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY

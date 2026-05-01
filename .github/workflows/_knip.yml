@@ -1,0 +1,46 @@
+name: Knip (Reusable)
+
+# This workflow can be called from other repositories
+# Usage:
+#   jobs:
+#     call-knip:
+#       uses: ubiquity-os/plugin-template/.github/workflows/_knip.yml@v1.0.0
+
+on:
+  workflow_call:
+    inputs:
+      bun-version:
+        description: 'Bun version to use'
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  run-knip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version || 'latest' }}
+
+      - name: Install toolchain
+        run: bun install
+
+      - name: Store PR number
+        run: echo ${{ github.event.number || '0' }} > pr-number.txt
+
+      - name: Run Knip
+        run: bun run knip || bun run knip --reporter json > knip-results.json
+
+      - name: Upload knip result
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: knip-results
+          path: |
+            knip-results.json
+            pr-number.txt
