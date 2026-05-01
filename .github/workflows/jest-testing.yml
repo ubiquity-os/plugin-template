@@ -1,29 +1,12 @@
 name: Run Jest testing suite
+
 on:
   workflow_dispatch:
   pull_request:
 
-env:
-  NODE_ENV: "test"
-
 jobs:
   testing:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Jest With Coverage
-        run: |
-          bun install --frozen-lockfile
-          bun run test
-
-      - name: Add Jest Report to Summary
-        if: always()
-        run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY
+    uses: ./.github/workflows/reusable/jest.yml
+    with:
+      package_manager: bun
+      enable_summary: true
