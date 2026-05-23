@@ -1,0 +1,109 @@
+name: Reusable Jest Testing Suite
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use: bun, yarn, npm, or pnpm."
+        required: false
+        default: "bun"
+        type: string
+      bun-version:
+        description: "Bun version to install when package-manager is bun."
+        required: false
+        default: "latest"
+        type: string
+      node-version:
+        description: "Node.js version to install for yarn, npm, or pnpm."
+        required: false
+        default: "24"
+        type: string
+      yarn-version:
+        description: "Optional Yarn version activated through Corepack."
+        required: false
+        default: ""
+        type: string
+      install-command:
+        description: "Dependency installation command."
+        required: false
+        default: "bun install --frozen-lockfile"
+        type: string
+      test-command:
+        description: "Command that runs the Jest test suite."
+        required: false
+        default: "bun run test"
+        type: string
+      summary-file:
+        description: "Markdown file appended to the GitHub step summary when present."
+        required: false
+        default: "test-dashboard.md"
+        type: string
+      node-env:
+        description: "NODE_ENV value used while running the test suite."
+        required: false
+        default: "test"
+        type: string
+
+jobs:
+  testing:
+    name: Run Jest testing suite
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      NODE_ENV: ${{ inputs.node-env }}
+    steps:
+      - name: Setup Bun
+        if: inputs.package-manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version }}
+
+      - name: Setup Node.js
+        if: inputs.package-manager != 'bun'
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+
+      - name: Setup package manager
+        if: inputs.package-manager != 'bun'
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          case "${{ inputs.package-manager }}" in
+            yarn)
+              if [ -n "${{ inputs.yarn-version }}" ]; then
+                corepack prepare "yarn@${{ inputs.yarn-version }}" --activate
+              fi
+              ;;
+            pnpm)
+              corepack prepare pnpm@latest --activate
+              ;;
+            npm)
+              ;;
+            *)
+              echo "Unsupported package-manager: ${{ inputs.package-manager }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Jest with coverage
+        run: |
+          ${{ inputs.install-command }}
+          ${{ inputs.test-command }}
+
+      - name: Add Jest report to summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "${{ inputs.summary-file }}" ]; then
+            cat "${{ inputs.summary-file }}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Jest dashboard found at ${{ inputs.summary-file }}" >> "$GITHUB_STEP_SUMMARY"
+          fi

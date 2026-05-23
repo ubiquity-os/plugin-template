@@ -1,0 +1,117 @@
+name: Reusable Knip
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use: bun, yarn, npm, or pnpm."
+        required: false
+        default: "bun"
+        type: string
+      bun-version:
+        description: "Bun version to install when package-manager is bun."
+        required: false
+        default: "latest"
+        type: string
+      node-version:
+        description: "Node.js version to install for yarn, npm, or pnpm."
+        required: false
+        default: "24"
+        type: string
+      yarn-version:
+        description: "Optional Yarn version activated through Corepack."
+        required: false
+        default: ""
+        type: string
+      install-command:
+        description: "Dependency installation command."
+        required: false
+        default: "bun install"
+        type: string
+      knip-command:
+        description: "Command used for the human-readable Knip run."
+        required: false
+        default: "bun run knip"
+        type: string
+      knip-json-command:
+        description: "Command used to produce the JSON artifact when Knip fails."
+        required: false
+        default: "bun run knip --reporter json"
+        type: string
+      artifact-name:
+        description: "Name of the uploaded artifact containing Knip results."
+        required: false
+        default: "knip-results"
+        type: string
+      upload-artifact:
+        description: "Whether to upload knip-results.json and pr-number.txt on failure."
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  run-knip:
+    name: Run Knip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        if: inputs.package-manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version }}
+
+      - name: Setup Node.js
+        if: inputs.package-manager != 'bun'
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+
+      - name: Setup package manager
+        if: inputs.package-manager != 'bun'
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          case "${{ inputs.package-manager }}" in
+            yarn)
+              if [ -n "${{ inputs.yarn-version }}" ]; then
+                corepack prepare "yarn@${{ inputs.yarn-version }}" --activate
+              fi
+              ;;
+            pnpm)
+              corepack prepare pnpm@latest --activate
+              ;;
+            npm)
+              ;;
+            *)
+              echo "Unsupported package-manager: ${{ inputs.package-manager }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Install toolchain
+        run: ${{ inputs.install-command }}
+
+      - name: Store PR number
+        if: github.event_name == 'pull_request'
+        run: echo "${{ github.event.number }}" > pr-number.txt
+
+      - name: Run Knip
+        shell: bash
+        run: |
+          set -o pipefail
+          ${{ inputs.knip-command }} || ${{ inputs.knip-json-command }} > knip-results.json
+
+      - name: Upload Knip result
+        if: failure() && inputs.upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            knip-results.json
+            pr-number.txt
+          if-no-files-found: ignore
