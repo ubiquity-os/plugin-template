@@ -1,5 +1,23 @@
 name: Run Jest testing suite
+
 on:
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use ('bun' or 'yarn')"
+        required: false
+        default: "bun"
+        type: string
+      bun-version:
+        description: "Bun version (when using bun)"
+        required: false
+        default: "latest"
+        type: string
+      node-version:
+        description: "Node.js version (when using yarn)"
+        required: false
+        default: "20"
+        type: string
   workflow_dispatch:
   pull_request:
 
@@ -11,19 +29,38 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-      - uses: oven-sh/setup-bun@v2
+      - name: Setup Bun
+        if: ${{ inputs.package-manager == 'bun' || inputs.package-manager == '' }}
+        uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: ${{ inputs.bun-version || 'latest' }}
+
+      - name: Setup Node
+        if: ${{ inputs.package-manager == 'yarn' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version || '20' }}
+          cache: "yarn"
 
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Jest With Coverage
+      - name: Run Tests (Bun)
+        if: ${{ inputs.package-manager == 'bun' || inputs.package-manager == '' }}
         run: |
           bun install --frozen-lockfile
           bun run test
 
+      - name: Run Tests (Yarn)
+        if: ${{ inputs.package-manager == 'yarn' }}
+        run: |
+          yarn install --immutable
+          yarn test
+
       - name: Add Jest Report to Summary
         if: always()
-        run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY
+        run: |
+          if [ -f test-dashboard.md ]; then
+            cat test-dashboard.md >> $GITHUB_STEP_SUMMARY
+          fi

@@ -1,6 +1,23 @@
 name: Knip
 
 on:
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use ('bun' or 'yarn')"
+        required: false
+        default: "bun"
+        type: string
+      bun-version:
+        description: "Bun version (when using bun)"
+        required: false
+        default: "latest"
+        type: string
+      node-version:
+        description: "Node.js version (when using yarn)"
+        required: false
+        default: "20"
+        type: string
   pull_request:
   workflow_dispatch:
 
@@ -12,16 +29,36 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup Bun
+        if: ${{ inputs.package-manager == 'bun' || inputs.package-manager == '' }}
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version || 'latest' }}
 
-      - name: Install toolchain
+      - name: Setup Node
+        if: ${{ inputs.package-manager == 'yarn' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version || '20' }}
+          cache: "yarn"
+
+      - name: Install toolchain (Bun)
+        if: ${{ inputs.package-manager == 'bun' || inputs.package-manager == '' }}
         run: bun install
 
-      - name: Store PR number
-        run: echo ${{ github.event.number }} > pr-number.txt
+      - name: Install toolchain (Yarn)
+        if: ${{ inputs.package-manager == 'yarn' }}
+        run: yarn install --immutable
 
-      - name: Run Knip
+      - name: Store PR number
+        run: echo ${{ github.event.number || github.event.pull_request.number || 0 }} > pr-number.txt
+
+      - name: Run Knip (Bun)
+        if: ${{ inputs.package-manager == 'bun' || inputs.package-manager == '' }}
         run: bun run knip || bun run knip --reporter json > knip-results.json
+
+      - name: Run Knip (Yarn)
+        if: ${{ inputs.package-manager == 'yarn' }}
+        run: yarn knip || yarn knip --reporter json > knip-results.json
 
       - name: Upload knip result
         if: failure()
